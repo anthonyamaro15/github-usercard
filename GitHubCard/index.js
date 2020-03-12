@@ -24,7 +24,87 @@
           user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+const cardParent = document.querySelector(".cards");
+let followersArray = [];
+
+function getData() {
+  axios
+    .get(`https://api.github.com/users/anthonyamaro15`)
+    .then(res => {
+      cardParent.appendChild(createCard(res.data));
+    })
+    .catch(err => console.log(err));
+}
+
+function getFollowersData() {
+  axios
+    .get(`https://api.github.com/users/anthonyamaro15/followers`)
+    .then(res => {
+      res.data.forEach(item => {
+        followersArray.push(item.login);
+      });
+    })
+    .catch(err => console.log(err));
+}
+
+getData();
+getFollowersData();
+
+setTimeout(() => {
+  followersArray.forEach(name => {
+    axios
+      .get(`https://api.github.com/users/${name}`)
+      .then(res => {
+        cardParent.appendChild(createCard(res.data));
+      })
+      .catch(err => console.log(err));
+  });
+}, 100);
+
+function createCard(obj) {
+  const card = document.createElement("div");
+  const img = document.createElement("img");
+  const cardInfo = document.createElement("div");
+  const h3 = document.createElement("h3");
+  const nameP = document.createElement("p");
+  const locationP = document.createElement("p");
+  const profileP = document.createElement("p");
+  const link = document.createElement("a");
+  const followersP = document.createElement("p");
+  const followingP = document.createElement("p");
+  const bioP = document.createElement("p");
+
+  card.classList.add("card");
+  cardInfo.classList.add("card-info");
+  h3.classList.add("name");
+  nameP.classList.add("username");
+
+  card.appendChild(img);
+  card.appendChild(cardInfo);
+  cardInfo.appendChild(h3);
+  cardInfo.appendChild(nameP);
+  cardInfo.appendChild(locationP);
+  cardInfo.appendChild(profileP);
+  cardInfo.appendChild(link);
+  cardInfo.appendChild(followersP);
+  cardInfo.appendChild(followingP);
+  cardInfo.appendChild(bioP);
+
+  img.src = obj.avatar_url;
+  h3.textContent = obj.name;
+  nameP.textContent = obj.login;
+  locationP.textContent = `Location: ${obj.location}`;
+  profileP.textContent = `Profile:`;
+  profileP.style.display = "inline-block";
+  profileP.style.margin = "0 0.5rem 0 0";
+  link.href = obj.html_url;
+  link.textContent = obj.html_url;
+  followersP.textContent = `Followers: ${obj.followers}`;
+  followingP.textContent = `Following: ${obj.following}`;
+  bioP.textContent = `Bio: ${obj.bio}`;
+
+  return card;
+}
 
 /* Step 3: Create a function that accepts a single object as its only argument,
           Using DOM methods and properties, create a component that will return the following DOM element:
