@@ -31,6 +31,7 @@ function getData() {
   axios
     .get(`https://api.github.com/users/anthonyamaro15`)
     .then(res => {
+      console.log(res.data);
       cardParent.appendChild(createCard(res.data));
     })
     .catch(err => console.log(err));
@@ -59,7 +60,7 @@ setTimeout(() => {
       })
       .catch(err => console.log(err));
   });
-}, 100);
+}, 200);
 
 function createCard(obj) {
   const card = document.createElement("div");
